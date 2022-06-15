@@ -240,5 +240,17 @@ public class ResourceTest {
 
         assertThat(expectFestivalDTO.getName(), equalTo(actualFestivalDTO.getName()));
     }
+    @Test
+    void deleteAShowById()
+    {
+        System.out.println("Testing to delete a show by id");
+        MainShowDTO mainShowDTO = given()
+                .contentType("application/json")
+                .when()
+                .delete("/info/delete/" +  mainShow1DTO.getId())
+                .then()
+                .extract().body().jsonPath().getObject("", MainShowDTO.class);
 
+        assertThat(mainShowDTO.getName(), equalTo(new MainShowDTO(mainShow1).getName()));
+    }
 }

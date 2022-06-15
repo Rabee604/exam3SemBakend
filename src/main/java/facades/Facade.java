@@ -83,7 +83,14 @@ public class Facade implements Ifacade {
         return new GuestDTO(guest);
     }
     @Override
-    public MainShowDTO deleteAShow(){
-     return null;
+    public MainShowDTO deleteAShow(Long id){
+        Mainshow mainshow = em.find(Mainshow.class, id);
+        em.getTransaction().begin();
+
+        em.remove(mainshow);
+        em.getTransaction().commit();
+
+        return new MainShowDTO(mainshow);
+
     }
 }

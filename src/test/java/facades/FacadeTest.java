@@ -18,6 +18,7 @@ class FacadeTest {
     Facade facade = Facade.getFacade(EMF_Creator.createEntityManagerFactoryForTest());
     static EntityManagerFactory emf;
     static EntityManager em;
+    Mainshow mainshow1;
     @BeforeEach
     void setUp() {
         emf = EMF_Creator.createEntityManagerFactoryForTest();
@@ -30,7 +31,7 @@ class FacadeTest {
         Guest guest3= new Guest("Name3","Phone3","Email3","Status3");
         Festival festival1= new Festival("Festival1","City1","StartDate1","Duration1");
         Festival festival2= new Festival("Festival2","City2","StartDate2","Duration2");
-        Mainshow mainshow1=new Mainshow("Show1","Duration1","Location1","StartDate1","StartTime1");
+        mainshow1=new Mainshow("Show1","Duration1","Location1","StartDate1","StartTime1");
         Mainshow mainshow2=new Mainshow("Show2","Duration2","Location2","StartDate2","StartTime2");
         Mainshow mainshow3=new Mainshow("Show3","Duration3","Location3","StartDate3","StartTime3");
         guest1.addShow(mainshow1);
@@ -47,11 +48,12 @@ class FacadeTest {
         try {
 
         em.getTransaction().begin();
-            em.createQuery("delete from Festival").executeUpdate();
+
             em.createQuery("delete from Guest ").executeUpdate();
             em.createQuery("delete from Mainshow ").executeUpdate();
             em.createQuery("delete from Role").executeUpdate();
             em.createQuery("delete from User").executeUpdate();
+            em.createQuery("delete from Festival").executeUpdate();
 
 
         em.persist(userRole);
@@ -105,9 +107,6 @@ class FacadeTest {
         assertEquals(expected, actual);
     }
 
-    //@Test
-    //void signMeToAShow() {
-    //}
 
     @Test
     void allFestival(){
@@ -153,7 +152,14 @@ class FacadeTest {
 
     }
 
-    /*@Test
+    @Test
     void deleteAShow() {
-    }*/
+            System.out.println("Testing delete a showById()");
+            int expected = 2;
+            MainShowDTO mainShowDTO= facade.deleteAShow(mainshow1.getId());
+            int actual = facade.getAllShows().size();
+            assertEquals(expected, actual);
+
+        }
+
 }

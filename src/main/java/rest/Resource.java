@@ -2,9 +2,12 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import dto.FestivalDTO;
 import dto.GuestDTO;
 import dto.MainShowDTO;
+import entities.Mainshow;
 import entities.User;
 import java.util.List;
 import javax.annotation.security.RolesAllowed;
@@ -14,6 +17,7 @@ import javax.persistence.TypedQuery;
 import javax.ws.rs.*;
 import javax.ws.rs.core.*;
 
+import errorhandling.API_Exception;
 import facades.Facade;
 import utils.EMF_Creator;
 
@@ -45,7 +49,7 @@ public class Resource {
 
         EntityManager em = EMF.createEntityManager();
         try {
-            TypedQuery<User> query = em.createQuery ("select u from User u",entities.User.class);
+            TypedQuery<User> query = em.createQuery("select u from User u", entities.User.class);
             List<User> users = query.getResultList();
             return "[" + users.size() + "]";
         } finally {
@@ -70,6 +74,7 @@ public class Resource {
         String thisuser = securityContext.getUserPrincipal().getName();
         return "{\"msg\": \"Hello to (admin) User: " + thisuser + "\"}";
     }
+
     @GET
     @Path("/show")
     @Produces(MediaType.APPLICATION_JSON)
@@ -80,6 +85,7 @@ public class Resource {
                 .entity(gson.toJson(c))
                 .build();
     }
+
     @GET
     @Path("/guestShow/{guest}")
     @Produces({MediaType.APPLICATION_JSON})
@@ -100,6 +106,7 @@ public class Resource {
                 .entity(gson.toJson(c))
                 .build();
     }
+
     @POST
     @Path("createGuest")
     @Produces({MediaType.APPLICATION_JSON})
@@ -111,6 +118,7 @@ public class Resource {
                 .entity(gson.toJson(facade.createAGuest(guestDTO)))
                 .build();
     }
+
     @POST
     @Path("createShow")
     @Produces({MediaType.APPLICATION_JSON})
@@ -122,6 +130,7 @@ public class Resource {
                 .entity(gson.toJson(facade.createAShow(mainShowDTO)))
                 .build();
     }
+
     @POST
     @Path("createFestival")
     @Produces({MediaType.APPLICATION_JSON})
@@ -132,5 +141,27 @@ public class Resource {
                 .ok()
                 .entity(gson.toJson(facade.createAFestival(festivalDTO)))
                 .build();
+    }
+
+    @DELETE
+    @Path("/delete")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response deleteShow(String content) throws API_Exception {
+        MainShowDTO mainShow = gson.fromJson(content, MainShowDTO.class);
+        String idName;
+        try {
+            JsonObject json = JsonParser.parseString(content).getAsJsonObject();
+            idName = json.get("id").getAsString();
+
+
+        } catch (Exception e) {
+            throw new API_Exception("Malformed JSON", 400, e);
+        }
+        return Response
+                .ok()
+                .entity(gson.toJson(facade.deleteAShow(Long.parseLong(idName))))
+                .build();
+
     }
 }

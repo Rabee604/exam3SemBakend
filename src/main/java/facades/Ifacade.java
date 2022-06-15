@@ -16,6 +16,6 @@ public interface Ifacade {
     MainShowDTO  createAShow(MainShowDTO mainShowDTO);
     FestivalDTO createAFestival(FestivalDTO festivalDTO);
     GuestDTO createAGuest(GuestDTO guestDTO);
-    MainShowDTO deleteAShow();
+    MainShowDTO deleteAShow(Long id);
 
 }
