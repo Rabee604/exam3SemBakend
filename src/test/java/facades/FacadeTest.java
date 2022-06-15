@@ -1,5 +1,8 @@
 package facades;
 
+import dto.FestivalDTO;
+import dto.GuestDTO;
+import dto.MainShowDTO;
 import entities.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,8 +28,8 @@ class FacadeTest {
         Guest guest1= new Guest("Name1","Phone1","Email1","Status1");
         Guest guest2= new Guest("Name2","Phone2","Email2","Status2");
         Guest guest3= new Guest("Name3","Phone3","Email3","Status3");
-        Festival festival1= new Festival("Name1","City1","StartDate1","Duration1");
-        Festival festival2= new Festival("Name2","City2","StartDate2","Duration2");
+        Festival festival1= new Festival("Festival1","City1","StartDate1","Duration1");
+        Festival festival2= new Festival("Festival2","City2","StartDate2","Duration2");
         Mainshow mainshow1=new Mainshow("Show1","Duration1","Location1","StartDate1","StartTime1");
         Mainshow mainshow2=new Mainshow("Show2","Duration2","Location2","StartDate2","StartTime2");
         Mainshow mainshow3=new Mainshow("Show3","Duration3","Location3","StartDate3","StartTime3");
@@ -86,23 +89,71 @@ class FacadeTest {
         assertEquals(expected, actual);
     }
 
-    /*@Test
+    @Test
     void getMyShow() {
+        System.out.println("Test for getting my show");
+        int expected = 2;
+        int actual = facade.getMyShow("Name1").size();
+        assertEquals(expected, actual);
     }
 
     @Test
-    void signMeToAShow() {
+    void getAllGuest() {
+        System.out.println("Test for getting all guest");
+        int expected = 3;
+        int actual = facade.getGuest().size();
+        assertEquals(expected, actual);
     }
 
+    //@Test
+    //void signMeToAShow() {
+    //}
+
+    @Test
+    void allFestival(){
+        System.out.println("Test for getting all festivals");
+        int expected = 2;
+        int actual = facade.getFestivals().size();
+        assertEquals(expected, actual);
+
+    }
     @Test
     void createAShow() {
+        System.out.println("Test create a show");
+        int expected = 4;
+        Mainshow mainShow4=new Mainshow("Show4","Duration4","Location4","StartDate4","StartTime4");
+        MainShowDTO mainShowDTO = new MainShowDTO(mainShow4);
+        facade.createAShow(mainShowDTO);
+        int actual = facade.getAllShows().size();
+        assertEquals(expected, actual);
+
     }
 
     @Test
     void createAFestival() {
+        System.out.println("Test create a festival");
+        int expected = 3;
+        Festival festival3= new Festival("Festival3","City3","StartDate3","Duration3");
+        FestivalDTO festivalDTO = new FestivalDTO(festival3);
+        facade.createAFestival(festivalDTO);
+        int actual= facade.getFestivals().size();
+        assertEquals(expected, actual);
+
+
+    }
+    @Test
+    void createAGuest() {
+        System.out.println("Test create a guest");
+        int expected = 4;
+        Guest guest4= new Guest("Name4","Phone4","Email4","Status4");
+        GuestDTO guestDTO = new GuestDTO(guest4);
+        facade.createAGuest(guestDTO);
+        int actual = facade.getGuest().size();
+        assertEquals(expected, actual);
+
     }
 
-    @Test
+    /*@Test
     void deleteAShow() {
     }*/
 }

@@ -52,6 +52,7 @@ public class Guest {
             show.addGuest(this);
         }
     }
+
     public Long getId() {
         return id;
     }
@@ -119,7 +120,7 @@ public class Guest {
 
     public void setFestival(Festival festival) {
         this.festival = festival;
-        festival.addGuest(this);
+        festival.getGuestLists().add(this);
     }
 
 }

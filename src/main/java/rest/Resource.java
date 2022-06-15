@@ -2,6 +2,8 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dto.FestivalDTO;
+import dto.GuestDTO;
 import dto.MainShowDTO;
 import entities.User;
 import java.util.List;
@@ -9,10 +11,8 @@ import javax.annotation.security.RolesAllowed;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.TypedQuery;
+import javax.ws.rs.*;
 import javax.ws.rs.core.*;
-import javax.ws.rs.Produces;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
 
 import facades.Facade;
 import utils.EMF_Creator;
@@ -73,11 +73,64 @@ public class Resource {
     @GET
     @Path("/show")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAllShoes() {
+    public Response getAllShows() {
         List<MainShowDTO> c = facade.getAllShows();
         return Response
                 .ok()
                 .entity(gson.toJson(c))
+                .build();
+    }
+    @GET
+    @Path("/guestShow/{guest}")
+    @Produces({MediaType.APPLICATION_JSON})
+    public Response getOwnerByBoat(@PathParam("guest") String guest) {
+        return Response
+                .ok()
+                .entity(gson.toJson(facade.getMyShow(guest)))
+                .build();
+    }
+
+    @GET
+    @Path("/allGuest")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllGuest() {
+        List<GuestDTO> c = facade.getGuest();
+        return Response
+                .ok()
+                .entity(gson.toJson(c))
+                .build();
+    }
+    @POST
+    @Path("createGuest")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response createGuest(String content) {
+        GuestDTO guestDTO = gson.fromJson(content, GuestDTO.class);
+        return Response
+                .ok()
+                .entity(gson.toJson(facade.createAGuest(guestDTO)))
+                .build();
+    }
+    @POST
+    @Path("createShow")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response createShow(String content) {
+        MainShowDTO mainShowDTO = gson.fromJson(content, MainShowDTO.class);
+        return Response
+                .ok()
+                .entity(gson.toJson(facade.createAShow(mainShowDTO)))
+                .build();
+    }
+    @POST
+    @Path("createFestival")
+    @Produces({MediaType.APPLICATION_JSON})
+    @Consumes({MediaType.APPLICATION_JSON})
+    public Response createFestival(String content) {
+        FestivalDTO festivalDTO = gson.fromJson(content, FestivalDTO.class);
+        return Response
+                .ok()
+                .entity(gson.toJson(facade.createAFestival(festivalDTO)))
                 .build();
     }
 }

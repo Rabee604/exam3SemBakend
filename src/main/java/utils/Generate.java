@@ -19,8 +19,8 @@ public class Generate {
         Guest guest1= new Guest("Name1","Phone1","Email1","Status1");
         Guest guest2= new Guest("Name2","Phone2","Email2","Status2");
         Guest guest3= new Guest("Name3","Phone3","Email3","Status3");
-        Festival festival1= new Festival("Name1","City1","StartDate1","Duration1");
-        Festival festival2= new Festival("Name2","City2","StartDate2","Duration2");
+        Festival festival1= new Festival("FestName1","City1","StartDate1","Duration1");
+        Festival festival2= new Festival("FestName2","City2","StartDate2","Duration2");
         Mainshow mainshow1=new Mainshow("Show1","Duration1","Location1","StartDate1","StartTime1");
         Mainshow mainshow2=new Mainshow("Show2","Duration2","Location2","StartDate2","StartTime2");
         Mainshow mainshow3=new Mainshow("Show3","Duration3","Location3","StartDate3","StartTime3");

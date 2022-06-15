@@ -40,7 +40,7 @@ public class Mainshow {
     public void addGuest(Guest guest){
         this.guestList.add(guest);
         if(!guest.getShowList().contains(this)){
-            guest.addShow(this);
+            guest.getShowList().add(this);
         }
     }
     public Long getId() {

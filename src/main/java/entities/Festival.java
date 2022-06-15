@@ -23,6 +23,9 @@ public class Festival {
     }
     public void addGuest(Guest guest) {
         this.guestLists.add(guest);
+        if (!guest.getFestival().equals(this)) {
+            guest.setFestival(this);
+        }
     }
     public Festival(Long id, String name, String city, String startDate, String duration) {
         this.id = id;

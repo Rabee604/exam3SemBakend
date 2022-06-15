@@ -2,9 +2,11 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import dto.FestivalDTO;
 import dto.GuestDTO;
 import dto.MainShowDTO;
 import entities.*;
+import facades.Facade;
 import org.junit.jupiter.api.*;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
@@ -34,11 +36,11 @@ public class ResourceTest {
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
     private static EntityManagerFactory emf;
-    private static Guest guest1,guest2,guest3;
+    private static Guest guest1, guest2, guest3;
     private static Festival festival1, festival2;
-    private static Mainshow mainShow1,mainShow2,mainShow3;
-    private static GuestDTO guest1DTO,guest2DTO,guest3DTO;
-    private static MainShowDTO mainShow1DTO,mainShow2DTO,mainShow3DTO;
+    private static Mainshow mainShow1, mainShow2, mainShow3;
+    private static GuestDTO guest1DTO, guest2DTO, guest3DTO;
+    private static MainShowDTO mainShow1DTO, mainShow2DTO, mainShow3DTO;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     static HttpServer startServer() {
@@ -80,14 +82,14 @@ public class ResourceTest {
 
         Role userRole = new Role("user");
         Role adminRole = new Role("admin");
-        guest1= new Guest("Name1","Phone1","Email1","Status1");
-        guest2= new Guest("Name2","Phone2","Email2","Status2");
-        guest3= new Guest("Name3","Phone3","Email3","Status3");
-        festival1= new Festival("Name1","City1","StartDate1","Duration1");
-        festival2= new Festival("Name2","City2","StartDate2","Duration2");
-        mainShow1=new Mainshow("Show1","Duration1","Location1","StartDate1","StartTime1");
-        mainShow2=new Mainshow("Show2","Duration2","Location2","StartDate2","StartTime2");
-        mainShow3=new Mainshow("Show3","Duration3","Location3","StartDate3","StartTime3");
+        guest1 = new Guest("Name1", "Phone1", "Email1", "Status1");
+        guest2 = new Guest("Name2", "Phone2", "Email2", "Status2");
+        guest3 = new Guest("Name3", "Phone3", "Email3", "Status3");
+        festival1 = new Festival("Name1", "City1", "StartDate1", "Duration1");
+        festival2 = new Festival("Name2", "City2", "StartDate2", "Duration2");
+        mainShow1 = new Mainshow("Show1", "Duration1", "Location1", "StartDate1", "StartTime1");
+        mainShow2 = new Mainshow("Show2", "Duration2", "Location2", "StartDate2", "StartTime2");
+        mainShow3 = new Mainshow("Show3", "Duration3", "Location3", "StartDate3", "StartTime3");
         guest1.addShow(mainShow1);
         guest1.addShow(mainShow2);
         guest3.addShow(mainShow1);
@@ -122,18 +124,19 @@ public class ResourceTest {
             em.persist(mainShow3);
             em.getTransaction().commit();
 
-        }finally {
+        } finally {
             em.close();
         }
 
 
         guest1DTO = new GuestDTO(guest1);
         guest2DTO = new GuestDTO(guest2);
-        guest3DTO = new GuestDTO(guest2);
-        mainShow1DTO= new MainShowDTO(mainShow1);
-        mainShow2DTO= new MainShowDTO(mainShow2);
-        mainShow3DTO= new MainShowDTO(mainShow3);
+        guest3DTO = new GuestDTO(guest3);
+        mainShow1DTO = new MainShowDTO(mainShow1);
+        mainShow2DTO = new MainShowDTO(mainShow2);
+        mainShow3DTO = new MainShowDTO(mainShow3);
     }
+
     @AfterEach
     void tearDown() {
         emf.close();
@@ -149,14 +152,93 @@ public class ResourceTest {
     public void getAllShows() {
         System.out.println("Testing all Shows");
 
-        List<MainShowDTO> actualOwnerListDTO = given()
+        List<MainShowDTO> actualMainShowDTO = given()
                 .contentType("application/json")
                 .when()
                 .get("/info/show")
                 .then()
-                .extract().body().jsonPath().getList("",MainShowDTO.class);
+                .extract().body().jsonPath().getList("", MainShowDTO.class);
 
-        assertThat(actualOwnerListDTO, containsInAnyOrder(mainShow1DTO,mainShow2DTO,mainShow3DTO));
+        assertThat(actualMainShowDTO, containsInAnyOrder(mainShow1DTO, mainShow2DTO, mainShow3DTO));
+    }
+
+    @Test
+    void getMyShows() {
+        System.out.println("Testing to get getMyShows");
+        List<MainShowDTO> actualMainShowDTOs = given()
+                .contentType("application/json")
+                .when()
+                .get("/info/guestShow/" + guest1.getName())
+                .then()
+                .extract().body().jsonPath().getList("", MainShowDTO.class);
+        assertThat(actualMainShowDTOs, containsInAnyOrder(mainShow1DTO, mainShow2DTO));
+    }
+
+    @Test
+    public void getAllGuest() {
+        System.out.println("Testing all guest");
+
+        List<GuestDTO> actualGuestDTOs = given()
+                .contentType("application/json")
+                .when()
+                .get("/info/allGuest")
+                .then()
+                .extract().body().jsonPath().getList("", GuestDTO.class);
+        assertThat(actualGuestDTOs, containsInAnyOrder(guest3DTO,guest2DTO,guest1DTO));
+    }
+    @Test
+    void createGuest() {
+        System.out.println("Testing to create a guest");
+
+        //Facade facade = Facade.getFacade(emf);
+        Guest guest4 = new Guest("Name4", "Phone4", "Email4", "Status4");
+        GuestDTO actualGuestDTO = new GuestDTO(guest4);
+        String s = GSON.toJson(actualGuestDTO);
+
+        GuestDTO expectGuestDTO = given()
+                .contentType("application/json").body(s)
+                .when()
+                .post("/info/createGuest")
+                .then()
+                .extract().body().jsonPath().getObject("", GuestDTO.class);
+
+        assertThat(expectGuestDTO.getEmail(), equalTo(actualGuestDTO.getEmail()));
+    }
+    @Test
+    void createShow() {
+        System.out.println("Testing to create a show");
+
+
+        Mainshow mainshow= new Mainshow("Show4", "Duration4", "Location4", "StartDate4", "StartTime4");
+        MainShowDTO actualMainShowDTO = new MainShowDTO(mainshow);
+
+        String s = GSON.toJson(actualMainShowDTO);
+
+        MainShowDTO expectShowDTO = given()
+                .contentType("application/json").body(s)
+                .when()
+                .post("/info/createShow")
+                .then()
+                .extract().body().jsonPath().getObject("", MainShowDTO.class);
+
+        assertThat(expectShowDTO.getName(), equalTo(actualMainShowDTO.getName()));
+    }
+    @Test
+    void createFestival() {
+        System.out.println("Testing to create a Festival");
+        Festival festival3 = new Festival("Name3", "City3", "StartDate3", "Duration3");
+        FestivalDTO actualFestivalDTO = new FestivalDTO(festival3);
+
+        String s = GSON.toJson(actualFestivalDTO);
+
+        FestivalDTO expectFestivalDTO = given()
+                .contentType("application/json").body(s)
+                .when()
+                .post("/info/createFestival")
+                .then()
+                .extract().body().jsonPath().getObject("", FestivalDTO.class);
+
+        assertThat(expectFestivalDTO.getName(), equalTo(actualFestivalDTO.getName()));
     }
 
 }
