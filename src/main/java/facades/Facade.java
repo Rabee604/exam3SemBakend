@@ -32,9 +32,14 @@ public class Facade implements Ifacade {
 
     }
     @Override
-    public List<MainShowDTO> getAllShows(){
-        List<Mainshow> mainShows=em.createQuery("select m from Mainshow m", Mainshow.class).getResultList();
+    public List<MainShowDTO> getAllShows() {
+        List<Mainshow> mainShows = em.createQuery("select m from Mainshow m", Mainshow.class).getResultList();
         return MainShowDTO.getShowDTOs(mainShows);
+    }
+        @Override
+        public List<FestivalDTO> getAllFestival(){
+            List<Festival> festivalList=em.createQuery("select m from Festival m", Festival.class).getResultList();
+            return FestivalDTO.getFestivalDTOs(festivalList);
 
     }
     @Override

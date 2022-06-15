@@ -106,6 +106,17 @@ public class Resource {
                 .entity(gson.toJson(c))
                 .build();
     }
+    @GET
+    @Path("/allFestival")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAllFestival() {
+        List<FestivalDTO> c = facade.getFestivals();
+        return Response
+                .ok()
+                .entity(gson.toJson(c))
+                .build();
+    }
+
 
     @POST
     @Path("createGuest")
@@ -186,6 +197,34 @@ public class Resource {
         return Response
                 .ok()
                 .entity(gson.toJson(facade.signMeToAShow(showName,guestName)))
+                .build();
+    }
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("edit")
+    public Response editFestival(String jsonString) throws API_Exception {
+
+        EntityManager em = EMF.createEntityManager();
+
+        String festivalName;
+        String cityName;
+        String startDate;
+        String duration;
+        try {
+            JsonObject json = JsonParser.parseString(jsonString).getAsJsonObject();
+
+            festivalName = json.get("festivalName").getAsString();
+            cityName= json.get("cityName").getAsString();
+            startDate= json.get("startDate").getAsString();
+            duration= json.get("duration").getAsString();
+
+        } catch (Exception e) {
+            throw new API_Exception("Malformed JSON", 400, e);
+        }
+        return Response
+                .ok()
+                .entity(gson.toJson(facade.editFestival(festivalName,cityName,startDate,duration)))
                 .build();
     }
 }

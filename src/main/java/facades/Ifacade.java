@@ -12,6 +12,7 @@ public interface Ifacade {
     List<MainShowDTO> getMyShow(String name);
     List<GuestDTO> getGuest();
     List<FestivalDTO> getFestivals();
+    List<FestivalDTO> getAllFestival();
     MainShowDTO  signMeToAShow(String name, String guestName);
     MainShowDTO  createAShow(MainShowDTO mainShowDTO);
     FestivalDTO createAFestival(FestivalDTO festivalDTO);
