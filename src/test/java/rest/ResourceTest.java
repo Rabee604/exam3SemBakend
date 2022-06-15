@@ -1,21 +1,28 @@
 package rest;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import dto.GuestDTO;
+import dto.MainShowDTO;
+import entities.*;
+import org.junit.jupiter.api.*;
 import utils.EMF_Creator;
 import io.restassured.RestAssured;
 import static io.restassured.RestAssured.given;
 import io.restassured.parsing.Parser;
 import java.net.URI;
+import java.util.List;
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.ws.rs.core.UriBuilder;
 import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 //Uncomment the line below, to temporarily disable this test
 //@Disabled
 
@@ -27,6 +34,12 @@ public class ResourceTest {
     static final URI BASE_URI = UriBuilder.fromUri(SERVER_URL).port(SERVER_PORT).build();
     private static HttpServer httpServer;
     private static EntityManagerFactory emf;
+    private static Guest guest1,guest2,guest3;
+    private static Festival festival1, festival2;
+    private static Mainshow mainShow1,mainShow2,mainShow3;
+    private static GuestDTO guest1DTO,guest2DTO,guest3DTO;
+    private static MainShowDTO mainShow1DTO,mainShow2DTO,mainShow3DTO;
+    private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 
     static HttpServer startServer() {
         ResourceConfig rc = ResourceConfig.forApplication(new ApplicationConfig());
@@ -57,7 +70,73 @@ public class ResourceTest {
     // Setup the DataBase (used by the test-server and this test) in a known state BEFORE EACH TEST
     @BeforeEach
     public void setUp() {
+        emf = EMF_Creator.createEntityManagerFactoryForTest();
+        EntityManager em = emf.createEntityManager();
 
+
+        User user = new User("user", "test123");
+        User admin = new User("admin", "test123");
+        User both = new User("user_admin", "test123");
+
+        Role userRole = new Role("user");
+        Role adminRole = new Role("admin");
+        guest1= new Guest("Name1","Phone1","Email1","Status1");
+        guest2= new Guest("Name2","Phone2","Email2","Status2");
+        guest3= new Guest("Name3","Phone3","Email3","Status3");
+        festival1= new Festival("Name1","City1","StartDate1","Duration1");
+        festival2= new Festival("Name2","City2","StartDate2","Duration2");
+        mainShow1=new Mainshow("Show1","Duration1","Location1","StartDate1","StartTime1");
+        mainShow2=new Mainshow("Show2","Duration2","Location2","StartDate2","StartTime2");
+        mainShow3=new Mainshow("Show3","Duration3","Location3","StartDate3","StartTime3");
+        guest1.addShow(mainShow1);
+        guest1.addShow(mainShow2);
+        guest3.addShow(mainShow1);
+        guest1.setFestival(festival1);
+        guest2.setFestival(festival1);
+        user.addRole(userRole);
+        admin.addRole(adminRole);
+        both.addRole(userRole);
+        both.addRole(adminRole);
+        try {
+
+            em.getTransaction().begin();
+            em.createQuery("delete from Festival").executeUpdate();
+            em.createQuery("delete from Guest ").executeUpdate();
+            em.createQuery("delete from Mainshow ").executeUpdate();
+            em.createQuery("delete from Role").executeUpdate();
+            em.createQuery("delete from User").executeUpdate();
+
+
+            em.persist(userRole);
+            em.persist(adminRole);
+            em.persist(user);
+            em.persist(admin);
+            em.persist(both);
+            em.persist(guest1);
+            em.persist(guest2);
+            em.persist(guest3);
+            em.persist(festival1);
+            em.persist(festival2);
+            em.persist(mainShow1);
+            em.persist(mainShow2);
+            em.persist(mainShow3);
+            em.getTransaction().commit();
+
+        }finally {
+            em.close();
+        }
+
+
+        guest1DTO = new GuestDTO(guest1);
+        guest2DTO = new GuestDTO(guest2);
+        guest3DTO = new GuestDTO(guest2);
+        mainShow1DTO= new MainShowDTO(mainShow1);
+        mainShow2DTO= new MainShowDTO(mainShow2);
+        mainShow3DTO= new MainShowDTO(mainShow3);
+    }
+    @AfterEach
+    void tearDown() {
+        emf.close();
     }
 
     @Test
@@ -66,5 +145,18 @@ public class ResourceTest {
     }
 
     //This test assumes the database contains two rows
+    @Test
+    public void getAllShows() {
+        System.out.println("Testing all Shows");
+
+        List<MainShowDTO> actualOwnerListDTO = given()
+                .contentType("application/json")
+                .when()
+                .get("/info/show")
+                .then()
+                .extract().body().jsonPath().getList("",MainShowDTO.class);
+
+        assertThat(actualOwnerListDTO, containsInAnyOrder(mainShow1DTO,mainShow2DTO,mainShow3DTO));
+    }
 
 }

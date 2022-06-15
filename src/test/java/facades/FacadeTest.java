@@ -86,7 +86,7 @@ class FacadeTest {
         assertEquals(expected, actual);
     }
 
-    @Test
+    /*@Test
     void getMyShow() {
     }
 
@@ -104,5 +104,5 @@ class FacadeTest {
 
     @Test
     void deleteAShow() {
-    }
+    }*/
 }
