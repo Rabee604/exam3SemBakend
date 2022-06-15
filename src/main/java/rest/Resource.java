@@ -89,7 +89,7 @@ public class Resource {
     @GET
     @Path("/guestShow/{guest}")
     @Produces({MediaType.APPLICATION_JSON})
-    public Response getOwnerByBoat(@PathParam("guest") String guest) {
+    public Response getMyShow(@PathParam("guest") String guest) {
         return Response
                 .ok()
                 .entity(gson.toJson(facade.getMyShow(guest)))
