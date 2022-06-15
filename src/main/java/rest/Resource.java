@@ -164,4 +164,28 @@ public class Resource {
                 .build();
 
     }
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("setShow")
+    public Response addToShow(String jsonString) throws API_Exception {
+
+        EntityManager em = EMF.createEntityManager();
+
+        String showName;
+        String guestName;
+        try {
+            JsonObject json = JsonParser.parseString(jsonString).getAsJsonObject();
+
+            showName = json.get("showName").getAsString();
+            guestName= json.get("guestName").getAsString();
+
+        } catch (Exception e) {
+            throw new API_Exception("Malformed JSON", 400, e);
+        }
+        return Response
+                .ok()
+                .entity(gson.toJson(facade.signMeToAShow(showName,guestName)))
+                .build();
+    }
 }

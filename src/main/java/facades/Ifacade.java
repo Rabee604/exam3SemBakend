@@ -12,10 +12,11 @@ public interface Ifacade {
     List<MainShowDTO> getMyShow(String name);
     List<GuestDTO> getGuest();
     List<FestivalDTO> getFestivals();
-    MainShowDTO  signMeToAShow();
+    MainShowDTO  signMeToAShow(String name, String guestName);
     MainShowDTO  createAShow(MainShowDTO mainShowDTO);
     FestivalDTO createAFestival(FestivalDTO festivalDTO);
     GuestDTO createAGuest(GuestDTO guestDTO);
     MainShowDTO deleteAShow(Long id);
+    FestivalDTO editFestival (String name, String city, String startDate,String  duration);
 
 }

@@ -2,6 +2,7 @@ package rest;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+
 import dto.FestivalDTO;
 import dto.GuestDTO;
 import dto.MainShowDTO;
@@ -21,6 +22,7 @@ import org.glassfish.grizzly.http.server.HttpServer;
 import org.glassfish.grizzly.http.util.HttpStatus;
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 import org.glassfish.jersey.server.ResourceConfig;
+
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -241,17 +243,9 @@ public class ResourceTest {
 
         assertThat(expectFestivalDTO.getName(), equalTo(actualFestivalDTO.getName()));
     }
-   /* @Test
-    void deleteAShowById()
-    {
-        System.out.println("Testing to delete a show by id");
-        MainShowDTO mainShowDTO = given()
-                .contentType("application/json")
-                .when()
-                .delete("/info/delete/" +  mainShow1DTO.getId())
-                .then()
-                .extract().body().jsonPath().getObject("", MainShowDTO.class);
 
-        assertThat(mainShowDTO.getName(), equalTo(new MainShowDTO(mainShow1).getName()));
-    }*/
-}
+
+
+    }
+
+

@@ -56,8 +56,19 @@ public class Facade implements Ifacade {
         return MainShowDTO.getShowDTOs(guest1.getShowList());
     }
     @Override
-   public MainShowDTO signMeToAShow(){
-        return null;
+   public MainShowDTO signMeToAShow(String name, String guestName){
+        TypedQuery<Mainshow> query= em.createQuery("select m from Mainshow m where m.name= :name", Mainshow.class);
+        query.setParameter("name",name);
+        Mainshow mainshow =query.getSingleResult();
+        TypedQuery<Guest> query1= em.createQuery("select g from Guest g where g.name= :guestName", Guest.class);
+        query1.setParameter("guestName",guestName);
+        Guest guest1 =query1.getSingleResult();
+        guest1.addShow(mainshow);
+        em.getTransaction().begin();
+        em.merge(guest1);
+        em.getTransaction().commit();
+
+        return new MainShowDTO(mainshow);
     }
     @Override
    public MainShowDTO  createAShow(MainShowDTO mainShowDTO){
@@ -93,4 +104,17 @@ public class Facade implements Ifacade {
         return new MainShowDTO(mainshow);
 
     }
+    public FestivalDTO editFestival (String name, String city, String startDate,String  duration){
+        TypedQuery<Festival> query= em.createQuery("select f from Festival f where f.name= :name", Festival.class);
+        query.setParameter("name",name);
+        Festival festival =query.getSingleResult();
+        festival.setCity(city);
+        festival.setStartDate(startDate);
+        festival.setDuration(duration);
+        em.getTransaction().begin();
+        em.merge(festival);
+        em.getTransaction().commit();
+        return new FestivalDTO(festival);
+    }
+
 }

@@ -19,6 +19,7 @@ class FacadeTest {
     static EntityManagerFactory emf;
     static EntityManager em;
     Mainshow mainshow1;
+    Festival festival1;
     @BeforeEach
     void setUp() {
         emf = EMF_Creator.createEntityManagerFactoryForTest();
@@ -29,7 +30,7 @@ class FacadeTest {
         Guest guest1= new Guest("Name1","Phone1","Email1","Status1");
         Guest guest2= new Guest("Name2","Phone2","Email2","Status2");
         Guest guest3= new Guest("Name3","Phone3","Email3","Status3");
-        Festival festival1= new Festival("Festival1","City1","StartDate1","Duration1");
+        festival1= new Festival("Festival1","City1","StartDate1","Duration1");
         Festival festival2= new Festival("Festival2","City2","StartDate2","Duration2");
         mainshow1=new Mainshow("Show1","Duration1","Location1","StartDate1","StartTime1");
         Mainshow mainshow2=new Mainshow("Show2","Duration2","Location2","StartDate2","StartTime2");
@@ -159,6 +160,17 @@ class FacadeTest {
             MainShowDTO mainShowDTO= facade.deleteAShow(mainshow1.getId());
             int actual = facade.getAllShows().size();
             assertEquals(expected, actual);
+
+        }
+        @Test
+    void editFestival(){
+            System.out.println("Testing editFestival()");
+            String expected = "City100";
+            FestivalDTO festivalDTO =facade.editFestival(festival1.getName(),"City100","StartDate100","Duration100");
+            String actual= festivalDTO.getCity();
+            assertEquals(expected, actual);
+
+
 
         }
 
