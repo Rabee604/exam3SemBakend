@@ -1,18 +1,24 @@
-package utils;
-
+package facades;
 
 import entities.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import utils.EMF_Creator;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 
-public class Generate {
+import static org.junit.jupiter.api.Assertions.*;
 
-    public static void main(String[] args) {
-
-        EntityManagerFactory emf = EMF_Creator.createEntityManagerFactory();
-        EntityManager em = emf.createEntityManager();
-
+class FacadeTest {
+    Facade facade = Facade.getFacade(EMF_Creator.createEntityManagerFactoryForTest());
+    static EntityManagerFactory emf;
+    static EntityManager em;
+    @BeforeEach
+    void setUp() {
+        emf = EMF_Creator.createEntityManagerFactoryForTest();
+        em = emf.createEntityManager();
         User user = new User("user", "test123");
         User admin = new User("admin", "test123");
         User both = new User("user_admin", "test123");
@@ -29,14 +35,22 @@ public class Generate {
         guest3.addShow(mainshow1);
         guest1.setFestival(festival1);
         guest2.setFestival(festival1);
-        em.getTransaction().begin();
-
         Role userRole = new Role("user");
         Role adminRole = new Role("admin");
         user.addRole(userRole);
         admin.addRole(adminRole);
         both.addRole(userRole);
         both.addRole(adminRole);
+        try {
+
+        em.getTransaction().begin();
+            em.createQuery("delete from Festival").executeUpdate();
+            em.createQuery("delete from Guest ").executeUpdate();
+            em.createQuery("delete from Mainshow ").executeUpdate();
+            em.createQuery("delete from Role").executeUpdate();
+            em.createQuery("delete from User").executeUpdate();
+
+
         em.persist(userRole);
         em.persist(adminRole);
         em.persist(user);
@@ -51,6 +65,44 @@ public class Generate {
         em.persist(mainshow2);
         em.persist(mainshow3);
         em.getTransaction().commit();
+
+    }finally {
+            em.close();
+        }
+        }
+
+    @AfterEach
+    void tearDown() {
+        emf.close();
     }
 
+
+
+    @Test
+    void getAllShows() {
+        System.out.println("Test for getting all show");
+        int expected = 3;
+        int actual = facade.getAllShows().size();
+        assertEquals(expected, actual);
+    }
+
+    @Test
+    void getMyShow() {
+    }
+
+    @Test
+    void signMeToAShow() {
+    }
+
+    @Test
+    void createAShow() {
+    }
+
+    @Test
+    void createAFestival() {
+    }
+
+    @Test
+    void deleteAShow() {
+    }
 }

@@ -3,6 +3,9 @@
     
     <!-- DO NOT RENAME THE PERSISTENCE UNIT -->
     <persistence-unit name="pu" transaction-type="RESOURCE_LOCAL">
+        <class>entities.Mainshow</class>
+        <class>entities.Guest</class>
+        <class>entities.Festival</class>
         <provider>org.eclipse.persistence.jpa.PersistenceProvider</provider>
 
         <exclude-unlisted-classes>false</exclude-unlisted-classes>
